@@ -4,6 +4,9 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
 from typing import Dict, List
 from math import pow
+import random
+import asyncio
+from typing import List, Optional
 
 app = FastAPI(title="FUDD Finance", description="Weird finance models that work")
 
@@ -53,6 +56,30 @@ class ModelGeneratorOutput(BaseModel):
     projections: List[FinancialStatement]
     summary: str
 
+# ----- LEVEL 7: MONTE CARLO SIMULATION -----
+class MonteCarloInput(BaseModel):
+    base_revenue: float = Field(..., gt=0)
+    revenue_growth_mean: float = Field(0.10, description="Average expected growth")
+    revenue_growth_std: float = Field(0.05, description="Volatility (standard deviation)")
+    years: int = Field(5, ge=1, le=10)
+    simulations: int = Field(1000, ge=100, le=10000, description="Number of scenarios to run")
+    cogs_percentage: float = Field(0.40, ge=0.0, le=1.0)
+    op_ex_percentage: float = Field(0.30, ge=0.0, le=1.0)
+
+class SimulationResult(BaseModel):
+    final_net_income: float
+    scenario_id: int
+
+class MonteCarloOutput(BaseModel):
+    total_simulations: int
+    mean_net_income: float
+    median_net_income: float
+    p10_net_income: float  # 10th percentile (bad case)
+    p90_net_income: float  # 90th percentile (good case)
+    probability_positive: float  # % of scenarios with profit
+    worst_case: float
+    best_case: float
+    all_outcomes: List[float] = Field(default=[], description="All simulation results for charting")
 
 # ----- LEVEL 3: COMPARABLE COMPANY ANALYSIS -----
 @app.post("/api/v1/comps", response_model=CompsOutput)
@@ -225,3 +252,64 @@ if __name__ == "__main__":
     import uvicorn
 
     uvicorn.run(app, host="0.0.0.0", port=8000)
+
+
+@app.post("/api/v1/monte-carlo", response_model=MonteCarloOutput)
+async def monte_carlo_simulation(input_data: MonteCarloInput):
+    """
+    Runs thousands of scenarios with random growth rates.
+    Returns probability distribution of outcomes.
+    """
+    
+    def run_one_simulation(sim_id: int) -> float:
+        """Run one random scenario and return final year net income"""
+        revenue = input_data.base_revenue
+        
+        for year in range(input_data.years):
+            # Random growth rate from normal distribution
+            growth = random.gauss(input_data.revenue_growth_mean, input_data.revenue_growth_std)
+            # Cap growth at -50% to +100% to keep realistic
+            growth = max(-0.5, min(1.0, growth))
+            
+            revenue = revenue * (1 + growth)
+            
+            # Simple P&L for this year
+            cogs = revenue * input_data.cogs_percentage
+            gross_profit = revenue - cogs
+            op_ex = revenue * input_data.op_ex_percentage
+            op_income = gross_profit - op_ex
+            # No taxes for simplicity
+            net_income = max(0, op_income)  # Can't lose more than zero (limited liability)
+        
+        return net_income
+    
+    # Run simulations (can be slow for 10k+)
+    outcomes = []
+    for i in range(input_data.simulations):
+        result = run_one_simulation(i)
+        outcomes.append(result)
+    
+    # Calculate statistics
+    outcomes_sorted = sorted(outcomes)
+    mean_val = sum(outcomes) / len(outcomes)
+    median_val = outcomes_sorted[len(outcomes_sorted) // 2]
+    p10_val = outcomes_sorted[int(len(outcomes_sorted) * 0.1)]
+    p90_val = outcomes_sorted[int(len(outcomes_sorted) * 0.9)]
+    positive_count = sum(1 for x in outcomes if x > 0)
+    prob_positive = positive_count / len(outcomes)
+    
+    # Sample outcomes for charting (keep all for frontend)
+    # But limit to 1000 for response size
+    sampled_outcomes = outcomes[:1000] if len(outcomes) > 1000 else outcomes
+    
+    return MonteCarloOutput(
+        total_simulations=input_data.simulations,
+        mean_net_income=round(mean_val, 0),
+        median_net_income=round(median_val, 0),
+        p10_net_income=round(p10_val, 0),
+        p90_net_income=round(p90_val, 0),
+        probability_positive=round(prob_positive * 100, 1),
+        worst_case=round(min(outcomes), 0),
+        best_case=round(max(outcomes), 0),
+        all_outcomes=sampled_outcomes
+    )
