@@ -10,6 +10,144 @@ from typing import List, Optional
 
 app = FastAPI(title="FUDD Finance", description="Weird finance models that work")
 
+# ----- LEVEL 5: LBO (LEVERAGED BUYOUT) MODEL -----
+from typing import List, Tuple
+
+class LBOInput(BaseModel):
+    # Company financials
+    ebitda: float = Field(..., gt=0, description="Current year EBITDA")
+    ebitda_growth_rate: float = Field(0.05, ge=-0.20, le=0.30, description="Annual EBITDA growth %")
+    
+    # Deal terms
+    purchase_ebitda_multiple: float = Field(8.0, ge=4.0, le=15.0, description="Purchase price = EBITDA × multiple")
+    exit_ebitda_multiple: float = Field(8.0, ge=4.0, le=15.0, description="Exit at this multiple")
+    
+    # Debt financing
+    senior_debt_percent: float = Field(0.50, ge=0.0, le=0.80, description="% of purchase price from senior debt")
+    senior_interest_rate: float = Field(0.08, ge=0.04, le=0.15, description="Senior debt interest rate")
+    sub_debt_percent: float = Field(0.25, ge=0.0, le=0.50, description="% of purchase price from subordinated debt")
+    sub_interest_rate: float = Field(0.12, ge=0.06, le=0.20, description="Sub debt interest rate (higher risk)")
+    
+    # Exit and time
+    holding_period_years: int = Field(5, ge=3, le=7, description="Years before selling")
+    initial_equity_percent: float = Field(0.25, ge=0.10, le=0.40, description="% of purchase price from sponsor equity")
+
+class DebtSchedule(BaseModel):
+    year: int
+    beginning_balance: float
+    interest: float
+    principal_payment: float
+    ending_balance: float
+
+class LBOOutput(BaseModel):
+    purchase_price: float
+    total_debt: float
+    initial_equity: float
+    exit_ebitda: float
+    exit_enterprise_value: float
+    exit_debt_balance: float
+    exit_equity_value: float
+    irr_percent: float
+    cash_on_cash_return: float  # Multiple of money (MoM)
+    debt_schedule: List[DebtSchedule]
+    summary: str
+
+@app.post("/api/v1/lbo", response_model=LBOOutput)
+def lbo_model(input_data: LBOInput):
+    """
+    Leveraged Buyout Model: Buy a company with debt, sell after X years.
+    Returns IRR and multiple of money (MoM).
+    """
+    # Step 1: Purchase price and financing
+    purchase_price = input_data.ebitda * input_data.purchase_ebitda_multiple
+    
+    senior_debt = purchase_price * input_data.senior_debt_percent
+    sub_debt = purchase_price * input_data.sub_debt_percent
+    total_debt = senior_debt + sub_debt
+    initial_equity = purchase_price * input_data.initial_equity_percent
+    
+    # Validate equity + debt = purchase price (should, but check)
+    if abs((initial_equity + total_debt) - purchase_price) > 1:
+        # Adjust equity to balance (simple fix)
+        initial_equity = purchase_price - total_debt
+    
+    # Step 2: Project EBITDA over holding period
+    ebitda_schedule = []
+    ebitda_current = input_data.ebitda
+    for year in range(1, input_data.holding_period_years + 1):
+        ebitda_current = ebitda_current * (1 + input_data.ebitda_growth_rate)
+        ebitda_schedule.append(ebitda_current)
+    
+    # Step 3: Debt schedule (pay down debt with cash flows)
+    # Simplified: use 80% of EBITDA for debt repayment (rest for taxes, capex)
+    debt_repayment_rate = 0.80  # 80% of EBITDA goes to debt paydown
+    
+    senior_balance = senior_debt
+    sub_balance = sub_debt
+    debt_schedule = []
+    
+    for year in range(1, input_data.holding_period_years + 1):
+        ebitda_year = ebitda_schedule[year - 1]
+        
+        # Interest payments
+        senior_interest = senior_balance * input_data.senior_interest_rate
+        sub_interest = sub_balance * input_data.sub_interest_rate
+        total_interest = senior_interest + sub_interest
+        
+        # Cash available for principal repayment
+        cash_for_debt = ebitda_year * debt_repayment_rate
+        principal_payment = max(0, cash_for_debt - total_interest)
+        
+        # Apply principal to senior debt first (senior gets paid first)
+        principal_to_senior = min(principal_payment, senior_balance)
+        senior_balance -= principal_to_senior
+        principal_to_sub = min(principal_payment - principal_to_senior, sub_balance)
+        sub_balance -= principal_to_sub
+        
+        debt_schedule.append(DebtSchedule(
+            year=year,
+            beginning_balance=senior_balance + sub_balance,
+            interest=round(total_interest, 0),
+            principal_payment=round(principal_payment, 0),
+            ending_balance=round(senior_balance + sub_balance, 0)
+        ))
+    
+    exit_debt_balance = senior_balance + sub_balance
+    
+    # Step 4: Exit value
+    exit_ebitda = ebitda_schedule[-1]
+    exit_enterprise_value = exit_ebitda * input_data.exit_ebitda_multiple
+    exit_equity_value = exit_enterprise_value - exit_debt_balance
+    
+    # Step 5: Returns calculations
+    cash_on_cash_return = exit_equity_value / initial_equity
+    
+    # IRR calculation: initial equity (-) to exit equity (+)
+    # Solving for r: exit_equity = initial_equity * (1 + r)^n
+    # r = (exit_equity / initial_equity)^(1/n) - 1
+    if initial_equity > 0 and exit_equity_value > 0:
+        irr = pow(exit_equity_value / initial_equity, 1 / input_data.holding_period_years) - 1
+    else:
+        irr = 0
+    
+    # Step 6: Summary
+    summary = f"Buy at {input_data.purchase_ebitda_multiple}x EBITDA (${purchase_price:,.0f}) with ${initial_equity:,.0f} equity. " \
+              f"Sell after {input_data.holding_period_years} years at {input_data.exit_ebitda_multiple}x on ${exit_ebitda:,.0f} EBITDA = ${exit_enterprise_value:,.0f}. " \
+              f"Exit equity = ${exit_equity_value:,.0f}. Return = {cash_on_cash_return:.1f}x money, IRR = {irr*100:.1f}%."
+    
+    return LBOOutput(
+        purchase_price=round(purchase_price, 0),
+        total_debt=round(total_debt, 0),
+        initial_equity=round(initial_equity, 0),
+        exit_ebitda=round(exit_ebitda, 0),
+        exit_enterprise_value=round(exit_enterprise_value, 0),
+        exit_debt_balance=round(exit_debt_balance, 0),
+        exit_equity_value=round(exit_equity_value, 0),
+        irr_percent=round(irr * 100, 1),
+        cash_on_cash_return=round(cash_on_cash_return, 1),
+        debt_schedule=debt_schedule,
+        summary=summary
+    )
 
 # ----- PYDANTIC MODELS (your TypeScript interfaces) -----
 class CompanyMetrics(BaseModel):
@@ -312,4 +450,98 @@ async def monte_carlo_simulation(input_data: MonteCarloInput):
         worst_case=round(min(outcomes), 0),
         best_case=round(max(outcomes), 0),
         all_outcomes=sampled_outcomes
+    )
+
+
+# ----- LEVEL 6: M&A ACCRETION/DILUTION MODEL -----
+
+class CompanyFinancials(BaseModel):
+    net_income: float = Field(..., description="Annual net income")
+    shares_outstanding: float = Field(..., gt=0, description="Number of shares")
+    eps: float = Field(default=0, description="Earnings per share (calculated if not provided)")
+
+class MAndAInput(BaseModel):
+    buyer: CompanyFinancials
+    target: CompanyFinancials
+    
+    # Deal terms
+    purchase_price: float = Field(..., gt=0, description="Total consideration paid")
+    cash_percent: float = Field(0.50, ge=0.0, le=1.0, description="% paid in cash")
+    stock_percent: float = Field(0.50, ge=0.0, le=1.0, description="% paid in stock")
+    buyer_stock_price: float = Field(..., gt=0, description="Buyer's current stock price")
+    
+    # Synergies and costs
+    synergies: float = Field(0, description="Annual cost savings after merger")
+    transaction_costs: float = Field(0, description="One-time deal fees")
+    
+    # Tax
+    tax_rate: float = Field(0.21, ge=0.0, le=0.40)
+
+class MAndAOutput(BaseModel):
+    buyer_standalone_eps: float
+    target_standalone_eps: float
+    pro_forma_net_income: float
+    pro_forma_shares: float
+    pro_forma_eps: float
+    accretion_dilution_percent: float
+    verdict: str  # "ACC RETIVE" or "DILUTIVE" (misspelled for weirdness)
+    explanation: str
+
+@app.post("/api/v1/m-and-a", response_model=MAndAOutput)
+def m_and_a_model(input_data: MAndAInput):
+    """
+    Merger model: Calculates if deal increases (accretive) or decreases (dilutive) EPS.
+    """
+    # Calculate EPS if not provided
+    buyer_eps = input_data.buyer.eps if input_data.buyer.eps > 0 else input_data.buyer.net_income / input_data.buyer.shares_outstanding
+    target_eps = input_data.target.eps if input_data.target.eps > 0 else input_data.target.net_income / input_data.target.shares_outstanding
+    
+    # Step 1: Combined pro-forma net income
+    # Buyer NI + Target NI + Synergies - Transaction Costs (after tax)
+    pro_forma_ni = (
+        input_data.buyer.net_income + 
+        input_data.target.net_income + 
+        input_data.synergies
+    )
+    
+    # Subtract transaction costs (one-time, after tax)
+    after_tax_transaction_costs = input_data.transaction_costs * (1 - input_data.tax_rate)
+    pro_forma_ni -= after_tax_transaction_costs
+    
+    # Step 2: New shares issued if paying with stock
+    stock_consideration = input_data.purchase_price * input_data.stock_percent
+    new_shares_issued = stock_consideration / input_data.buyer_stock_price
+    
+    pro_forma_shares = input_data.buyer.shares_outstanding + new_shares_issued
+    
+    # Step 3: Pro-forma EPS
+    pro_forma_eps = pro_forma_ni / pro_forma_shares if pro_forma_shares > 0 else 0
+    
+    # Step 4: Accretion/Dilution calculation
+    eps_change = pro_forma_eps - buyer_eps
+    accretion_dilution_percent = (eps_change / buyer_eps) * 100
+    
+    # Step 5: Verdict
+    if accretion_dilution_percent > 0:
+        verdict = "🟢 ACCRETIVE (+" + str(round(accretion_dilution_percent, 2)) + "%)"
+        verdict_short = "ACCRETIVE"
+    elif accretion_dilution_percent < 0:
+        verdict = "🔴 DILUTIVE (" + str(round(accretion_dilution_percent, 2)) + "%)"
+        verdict_short = "DILUTIVE"
+    else:
+        verdict = "⚪ NEUTRAL (0%)"
+        verdict_short = "NEUTRAL"
+    
+    explanation = f"Buyer EPS: ${buyer_eps:.2f} → Pro-forma EPS: ${pro_forma_eps:.2f}. " \
+                  f"Change: {accretion_dilution_percent:+.2f}%. {verdict_short} deal."
+    
+    return MAndAOutput(
+        buyer_standalone_eps=round(buyer_eps, 2),
+        target_standalone_eps=round(target_eps, 2),
+        pro_forma_net_income=round(pro_forma_ni, 0),
+        pro_forma_shares=round(pro_forma_shares, 0),
+        pro_forma_eps=round(pro_forma_eps, 2),
+        accretion_dilution_percent=round(accretion_dilution_percent, 2),
+        verdict=verdict,
+        explanation=explanation
     )
