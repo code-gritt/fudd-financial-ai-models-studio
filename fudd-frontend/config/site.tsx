@@ -1,32 +1,33 @@
 export type SiteConfig = typeof siteConfig;
 
 export const siteConfig = {
-  name: "YetuAi",
-  title: "Yetu Ai",
-  description:
-    "YetuAi is a startup that provides AI solutions for businesses and individuals.",
-  mainNav: [
-    {
-      title: "Docs",
-      href: "/docs",
+    name: 'FUDD',
+    title: 'FUDD - Financial Unified Data Dashboard',
+    description:
+        'Professional financial modeling platform offering LBO, Reverse DCF, Comps, Monte Carlo, M&A, and 3-statement models via REST API or web interface. Open source and enterprise-ready.',
+    mainNav: [
+        {
+            title: 'Models',
+            href: '/models',
+        },
+        {
+            title: 'API Docs',
+            href: '/docs',
+        },
+        {
+            title: 'Pricing',
+            href: '/pricing',
+        },
+        {
+            title: 'GitHub',
+            href: 'https://github.com/yourusername/fudd-financial-models',
+        },
+    ],
+    links: {
+        twitter: 'https://twitter.com/fudd_finance',
+        github: 'https://github.com/yourusername/fudd-financial-models',
+        docs: 'https://fudd.dev/docs',
+        api: 'https://api.fudd.dev',
+        discord: 'https://discord.gg/fudd',
     },
-    {
-      title: "Pricing",
-      href: "/pricing",
-    },
-    {
-      title: "Newsletter",
-      href: "/newsletter",
-    },
-    {
-      title: "Explore",
-      href: "/browse",
-    },
-  ],
-  links: {
-    twitter: "https://twitter.com/YetuAiNA",
-    github: "https://github.com/YetuAi-Demos",
-    docs: "https://YetuAi.io/docs",
-    api: "https://api.YetuAi.io",
-  },
 };

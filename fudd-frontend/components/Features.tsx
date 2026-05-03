@@ -1,15 +1,6 @@
 import { Badge } from './ui/badge';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import {
-    LineChart,
-    Percent,
-    TrendingUp,
-    Calculator,
-    BarChart,
-    PieChart,
-    GitMerge,
-    Activity,
-} from 'lucide-react';
+import { Percent, TrendingUp, Calculator, BarChart, GitMerge, Activity } from 'lucide-react';
 
 interface FeatureProps {
     title: string;

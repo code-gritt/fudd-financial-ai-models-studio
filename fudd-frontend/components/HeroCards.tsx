@@ -1,165 +1,121 @@
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { Badge } from "./ui/badge";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Badge } from './ui/badge';
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  CardFooter,
-} from "@/components/ui/card";
-import { Check, Linkedin } from "lucide-react";
-import { LightBulbIcon } from "./Icons";
-import { GitHubLogoIcon } from "@radix-ui/react-icons";
-import Link from "next/link";
-import Image from "next/image";
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
+    CardFooter,
+} from '@/components/ui/card';
+import { TrendingUp, Percent, BarChart3 } from 'lucide-react';
 
 export const HeroCards = () => {
-  return (
-    <div className="hidden lg:flex flex-row flex-wrap gap-8 relative w-[700px] h-[500px]">
-      {/* Testimonial */}
-      <Card className="absolute w-[340px] -top-[15px] drop-shadow-xl shadow-black/10 dark:shadow-white/10">
-        <CardHeader className="flex flex-row items-center gap-4 pb-2">
-          <Avatar>
-            <AvatarImage alt="" src="https://github.com/shadcn.png" />
-            <AvatarFallback>SH</AvatarFallback>
-          </Avatar>
+    return (
+        <div className="hidden lg:flex flex-row flex-wrap gap-8 relative w-[700px] h-[500px]">
+            {/* LBO Model Card */}
+            <Card className="absolute w-[320px] -top-[15px] left-[20px] drop-shadow-xl shadow-black/10 dark:shadow-white/10">
+                <CardHeader className="flex flex-row items-center gap-4 pb-2">
+                    <div className="bg-primary/10 p-2 rounded-lg">
+                        <TrendingUp className="w-6 h-6 text-primary" />
+                    </div>
+                    <div className="flex flex-col">
+                        <CardTitle className="text-lg">LBO Model</CardTitle>
+                        <CardDescription>Leveraged Buyout Analysis</CardDescription>
+                    </div>
+                </CardHeader>
+                <CardContent>
+                    <p className="text-sm text-muted-foreground">
+                        24.5% IRR • 2.8x MoM • 5-year hold
+                    </p>
+                </CardContent>
+            </Card>
 
-          <div className="flex flex-col">
-            <CardTitle className="text-lg">John Doe React</CardTitle>
-            <CardDescription>@john_doe</CardDescription>
-          </div>
-        </CardHeader>
+            {/* Monte Carlo Card */}
+            <Card className="absolute right-[20px] top-4 w-80 drop-shadow-xl shadow-black/10 dark:shadow-white/10">
+                <CardHeader className="mt-4 flex justify-center items-center pb-2">
+                    <div className="bg-primary/10 p-3 rounded-full -mt-8">
+                        <BarChart3 className="w-8 h-8 text-primary" />
+                    </div>
+                    <CardTitle className="text-center mt-2">Monte Carlo</CardTitle>
+                    <CardDescription className="font-normal text-center">
+                        Risk Simulation Engine
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className="text-center pb-2">
+                    <div className="space-y-2">
+                        <div className="flex justify-between text-xs">
+                            <span>p10: $74k</span>
+                            <span>p50: $87k</span>
+                            <span>p90: $103k</span>
+                        </div>
+                        <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                            <div className="h-full w-3/4 bg-primary rounded-full"></div>
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-2">
+                            10,000 iterations • Normal distribution
+                        </p>
+                    </div>
+                </CardContent>
+            </Card>
 
-        <CardContent>This landig page is awesome!</CardContent>
-      </Card>
+            {/* Reverse DCF Card */}
+            <Card className="absolute top-[130px] left-[10px] w-72 drop-shadow-xl shadow-black/10 dark:shadow-white/10">
+                <CardHeader>
+                    <CardTitle className="flex items-center justify-between">
+                        Reverse DCF
+                        <Badge variant="secondary" className="text-sm">
+                            Implied Growth
+                        </Badge>
+                    </CardTitle>
+                    <div>
+                        <span className="text-3xl font-bold">15.6%</span>
+                        <span className="text-muted-foreground text-sm"> CAGR</span>
+                    </div>
+                    <CardDescription className="text-xs">
+                        Market-implied growth rate based on current stock price
+                    </CardDescription>
+                </CardHeader>
+                <CardContent>
+                    <div className="flex justify-between text-sm">
+                        <span>Current Price: $175</span>
+                        <span>FCF/share: $6.50</span>
+                    </div>
+                </CardContent>
+                <hr className="w-4/5 m-auto" />
+                <CardFooter className="flex justify-center pt-4">
+                    <span className="text-xs text-muted-foreground">
+                        If you forecast higher → undervalued
+                    </span>
+                </CardFooter>
+            </Card>
 
-      {/* Team */}
-      <Card className="absolute right-[20px] top-4 w-80 flex flex-col justify-center items-center drop-shadow-xl shadow-black/10 dark:shadow-white/10">
-        <CardHeader className="mt-8 flex justify-center items-center pb-2">
-          <Image
-            src="https://i.pravatar.cc/150?img=58"
-            alt="user avatar"
-            width={100}
-            height={100}
-            className="absolute grayscale-[0%] -top-12 rounded-full w-24 h-24 aspect-square object-cover"
-          />
-          <CardTitle className="text-center">Leo Miranda</CardTitle>
-          <CardDescription className="font-normal text-primary">
-            Frontend Developer
-          </CardDescription>
-        </CardHeader>
+            {/* Comps Valuation Card */}
+            <Card className="absolute w-[280px] -right-[10px] bottom-[35px] drop-shadow-xl shadow-black/10 dark:shadow-white/10">
+                <CardHeader className="space-y-1 flex flex-row justify-start items-start gap-4">
+                    <div className="mt-1 bg-primary/10 p-2 rounded-lg">
+                        <Percent className="w-5 h-5 text-primary" />
+                    </div>
+                    <div>
+                        <CardTitle className="text-md">Comp Analysis</CardTitle>
+                        <CardDescription className="text-sm mt-1">
+                            EV/Revenue: 3.2x • P/E: 15.4x
+                        </CardDescription>
+                        <div className="mt-3 pt-2 border-t">
+                            <p className="text-xs text-muted-foreground">
+                                Valuation range: $500k - $520k
+                            </p>
+                        </div>
+                    </div>
+                </CardHeader>
+            </Card>
 
-        <CardContent className="text-center pb-2">
-          <p>
-            I really enjoy transforming ideas into functional software that
-            exceeds expectations
-          </p>
-        </CardContent>
-
-        <CardFooter>
-          <div>
-            <Link
-              href="https://github.com/leoMirandaa"
-              target="_blank"
-              className={buttonVariants({
-                variant: "ghost",
-                size: "sm",
-              })}
-            >
-              <span className="sr-only">Github icon</span>
-              <GitHubLogoIcon className="w-5 h-5" />
-            </Link>
-            <Link
-              href="https://twitter.com/leo_mirand4"
-              target="_blank"
-              className={buttonVariants({
-                variant: "ghost",
-                size: "sm",
-              })}
-            >
-              <span className="sr-only">X icon</span>
-              <svg
-                role="img"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-                className="fill-foreground w-5 h-5"
-              >
-                <title>X</title>
-                <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z" />
-              </svg>
-            </Link>
-
-            <Link
-              href="https://www.linkedin.com/"
-              target="_blank"
-              className={buttonVariants({
-                variant: "ghost",
-                size: "sm",
-              })}
-            >
-              <span className="sr-only">Linkedin icon</span>
-              <Linkedin size="20" />
-            </Link>
-          </div>
-        </CardFooter>
-      </Card>
-
-      {/* Pricing */}
-      <Card className="absolute top-[150px] left-[50px] w-72  drop-shadow-xl shadow-black/10 dark:shadow-white/10">
-        <CardHeader>
-          <CardTitle className="flex item-center justify-between">
-            Free
-            <Badge variant="secondary" className="text-sm text-primary">
-              Most popular
-            </Badge>
-          </CardTitle>
-          <div>
-            <span className="text-3xl font-bold">$0</span>
-            <span className="text-muted-foreground"> /month</span>
-          </div>
-
-          <CardDescription>
-            Lorem ipsum dolor sit, amet ipsum consectetur adipisicing elit.
-          </CardDescription>
-        </CardHeader>
-
-        <CardContent>
-          <Button className="w-full">Start Free Trial</Button>
-        </CardContent>
-
-        <hr className="w-4/5 m-auto mb-4" />
-
-        <CardFooter className="flex">
-          <div className="space-y-4">
-            {["4 Team member", "4 GB Storage", "Upto 6 pages"].map(
-              (benefit: string) => (
-                <span key={benefit} className="flex">
-                  <Check className="text-green-500" />{" "}
-                  <h3 className="ml-2">{benefit}</h3>
-                </span>
-              )
-            )}
-          </div>
-        </CardFooter>
-      </Card>
-
-      {/* Service */}
-      <Card className="absolute w-[350px] -right-[10px] bottom-[35px]  drop-shadow-xl shadow-black/10 dark:shadow-white/10">
-        <CardHeader className="space-y-1 flex md:flex-row justify-start items-start gap-4">
-          <div className="mt-1 bg-primary/20 p-1 rounded-2xl">
-            <LightBulbIcon />
-          </div>
-          <div>
-            <CardTitle>Light & dark mode</CardTitle>
-            <CardDescription className="text-md mt-2">
-              Lorem ipsum dolor sit amet consect adipisicing elit. Consectetur
-              natusm.
-            </CardDescription>
-          </div>
-        </CardHeader>
-      </Card>
-    </div>
-  );
+            {/* API Badge Floating */}
+            <Card className="absolute left-[200px] bottom-[80px] w-48 drop-shadow-xl shadow-black/10 dark:shadow-white/10 bg-primary/5 border-primary/20">
+                <CardContent className="py-3 text-center">
+                    <p className="text-sm font-semibold">REST API</p>
+                    <p className="text-xs text-muted-foreground">JSON in/out • Auto-docs</p>
+                </CardContent>
+            </Card>
+        </div>
+    );
 };

@@ -1,7 +1,6 @@
 import { Card, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { MagnifierIcon, WalletIcon, ChartIcon } from './Icons';
 import { LineChart, TrendingUp, Calculator } from 'lucide-react';
-import Image from 'next/image';
 
 interface ServiceProps {
     title: string;
