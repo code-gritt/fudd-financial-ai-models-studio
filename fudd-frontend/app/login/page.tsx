@@ -43,12 +43,11 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#0a0a0b]">
-      {/* Animated Background Elements */}
+    <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-slate-50">
+      {/* Background Decorative Elements (Soft & Subtle) */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-blue-600/10 blur-[120px] animate-pulse" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-purple-600/10 blur-[120px] animate-pulse" style={{ animationDelay: '2s' }} />
-        <div className="absolute top-[20%] right-[10%] w-[20%] h-[20%] rounded-full bg-indigo-600/5 blur-[80px]" />
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-blue-100/50 blur-[120px]" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-purple-100/50 blur-[120px]" />
       </div>
 
       <div className="container relative z-10 px-4 flex items-center justify-center">
@@ -56,21 +55,21 @@ export default function LoginPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="w-full max-w-[1000px] grid lg:grid-cols-2 gap-0 overflow-hidden rounded-3xl border border-white/10 shadow-2xl bg-black/40 backdrop-blur-xl"
+          className="w-full max-w-[1000px] grid lg:grid-cols-2 gap-0 overflow-hidden rounded-3xl border border-slate-200 shadow-[0_20px_50px_rgba(0,0,0,0.1)] bg-white"
         >
-          {/* Left Side: Branding/Info */}
-          <div className="hidden lg:flex flex-col justify-between p-12 bg-gradient-to-br from-blue-600/20 to-purple-600/20 border-r border-white/10">
+          {/* Left Side: Branding/Info (Light Premium) */}
+          <div className="hidden lg:flex flex-col justify-between p-12 bg-slate-50 border-r border-slate-100">
             <div>
               <Link href="/" className="flex items-center gap-3 mb-12">
-                <div className="p-2 bg-blue-600 rounded-lg shadow-lg shadow-blue-600/20">
-                  <LogoIcon />
+                <div className="p-2 bg-slate-900 rounded-lg shadow-lg">
+                  <LogoIcon className="text-white" />
                 </div>
-                <span className="font-bold text-2xl tracking-tight text-white uppercase">{siteConfig.title}</span>
+                <span className="font-bold text-2xl tracking-tight text-slate-900 uppercase">{siteConfig.title}</span>
               </Link>
               
               <div className="space-y-8">
-                <h1 className="text-4xl font-extrabold text-white leading-tight">
-                  The Future of <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">Financial Modeling</span> is here.
+                <h1 className="text-4xl font-extrabold text-slate-900 leading-tight">
+                  The Future of <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">Financial Modeling</span> is here.
                 </h1>
                 
                 <div className="space-y-4">
@@ -84,9 +83,9 @@ export default function LoginPage() {
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: 0.4 + (i * 0.1) }}
-                      className="flex items-center gap-3 text-slate-300"
+                      className="flex items-center gap-3 text-slate-600"
                     >
-                      <item.icon className="w-5 h-5 text-blue-400" />
+                      <item.icon className="w-5 h-5 text-blue-600" />
                       <span className="text-sm font-medium">{item.text}</span>
                     </motion.div>
                   ))}
@@ -94,29 +93,29 @@ export default function LoginPage() {
               </div>
             </div>
             
-            <div className="text-slate-500 text-xs">
+            <div className="text-slate-400 text-xs font-medium">
               &copy; 2024 {siteConfig.title} Studio. Trusted by top financial analysts worldwide.
             </div>
           </div>
 
-          {/* Right Side: Login Form */}
-          <div className="p-8 lg:p-12 flex flex-col justify-center bg-black/20">
+          {/* Right Side: Login Form (Light) */}
+          <div className="p-8 lg:p-12 flex flex-col justify-center">
             <div className="mb-8 lg:hidden flex flex-col items-center">
-               <div className="p-2 bg-blue-600 rounded-lg mb-4">
-                  <LogoIcon />
+               <div className="p-2 bg-slate-900 rounded-lg mb-4">
+                  <LogoIcon className="text-white" />
                 </div>
-                <h2 className="text-2xl font-bold text-white">Welcome Back</h2>
+                <h2 className="text-2xl font-bold text-slate-900 tracking-tight">Welcome Back</h2>
             </div>
             
             <div className="space-y-2 mb-8 hidden lg:block">
-              <h2 className="text-3xl font-bold text-white">Sign In</h2>
-              <p className="text-slate-400">Enter your credentials to access your studio</p>
+              <h2 className="text-3xl font-bold text-slate-900 tracking-tight">Sign In</h2>
+              <p className="text-slate-500">Enter your credentials to access your studio</p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-slate-300 ml-1" htmlFor="username">
+                  <label className="text-sm font-semibold text-slate-700 ml-1" htmlFor="username">
                     Username
                   </label>
                   <div className="relative group">
@@ -126,17 +125,17 @@ export default function LoginPage() {
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
                       required
-                      className="h-12 bg-white/5 border-white/10 text-white placeholder:text-slate-600 focus:border-blue-500/50 focus:ring-blue-500/20 transition-all rounded-xl"
+                      className="h-12 bg-slate-50 border-slate-200 text-slate-900 placeholder:text-slate-400 focus:border-blue-600 focus:ring-blue-100 transition-all rounded-xl"
                     />
                   </div>
                 </div>
                 
                 <div className="space-y-2">
                   <div className="flex items-center justify-between ml-1">
-                    <label className="text-sm font-medium text-slate-300" htmlFor="password">
+                    <label className="text-sm font-semibold text-slate-700" htmlFor="password">
                       Password
                     </label>
-                    <Link href="#" className="text-xs text-blue-400 hover:text-blue-300 transition-colors">
+                    <Link href="#" className="text-xs text-blue-600 hover:text-blue-700 font-semibold transition-colors">
                       Forgot password?
                     </Link>
                   </div>
@@ -147,7 +146,7 @@ export default function LoginPage() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    className="h-12 bg-white/5 border-white/10 text-white placeholder:text-slate-600 focus:border-blue-500/50 focus:ring-blue-500/20 transition-all rounded-xl"
+                    className="h-12 bg-slate-50 border-slate-200 text-slate-900 placeholder:text-slate-400 focus:border-blue-600 focus:ring-blue-100 transition-all rounded-xl"
                   />
                 </div>
               </div>
@@ -158,9 +157,9 @@ export default function LoginPage() {
                     initial={{ opacity: 0, height: 0 }}
                     animate={{ opacity: 1, height: 'auto' }}
                     exit={{ opacity: 0, height: 0 }}
-                    className="p-4 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center gap-2"
+                    className="p-4 text-sm text-red-600 bg-red-50 border border-red-100 rounded-xl flex items-center gap-2"
                   >
-                    <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-red-500" />
                     {error}
                   </motion.div>
                 )}
@@ -169,23 +168,21 @@ export default function LoginPage() {
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="w-full h-12 text-base font-bold bg-blue-600 hover:bg-blue-500 text-white rounded-xl shadow-lg shadow-blue-600/20 transition-all duration-300 group overflow-hidden relative"
+                className="w-full h-12 text-base font-bold bg-slate-900 hover:bg-slate-800 text-white rounded-xl shadow-lg transition-all duration-300 group overflow-hidden relative"
               >
                 {isLoading ? (
-                  <Loader2 className="h-5 w-5 animate-spin" />
+                  <Loader2 className="h-5 w-5 animate-spin text-white" />
                 ) : (
                   <span className="flex items-center justify-center gap-2">
                     Access Dashboard <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </span>
                 )}
-                {/* Shine Effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-[-20deg] translate-x-[-150%] group-hover:translate-x-[150%] transition-transform duration-700" />
               </Button>
 
               <div className="pt-4 text-center">
-                <p className="text-sm text-slate-500">
+                <p className="text-sm text-slate-500 font-medium">
                   New to FUDD?{" "}
-                  <Link href="#" className="text-white hover:text-blue-400 transition-colors font-semibold">
+                  <Link href="#" className="text-slate-900 hover:text-blue-600 transition-colors font-bold">
                     Request an invite
                   </Link>
                 </p>
@@ -195,9 +192,8 @@ export default function LoginPage() {
         </motion.div>
       </div>
 
-      {/* Decorative Circles */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] border border-white/5 rounded-full pointer-events-none" />
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1200px] h-[1200px] border border-white/5 rounded-full pointer-events-none" />
+      {/* Decorative Background Patterns */}
+      <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]" />
     </div>
   );
 }
