@@ -112,7 +112,7 @@ export default function DashboardPage() {
             <CardContent>
               <div className="flex items-center gap-2">
                 <div className={`w-2 h-2 rounded-full ${status?.ok ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`} />
-                <span className="text-2xl font-bold uppercase">{status?.value || "Connecting..."}</span>
+                <span className="text-2xl font-bold uppercase">{status?.ok ? "ONLINE" : (status?.value || "Connecting...")}</span>
               </div>
               <p className="text-xs text-slate-400 mt-1">Endpoint: api.fudd.finance</p>
             </CardContent>
@@ -141,11 +141,24 @@ export default function DashboardPage() {
               color="purple"
             />
             <ModelCard 
+              title="Reverse DCF" 
+              desc="Calculate implied market growth rates based on current stock price and FCF."
+              icon={<TrendingUp className="w-6 h-6" />}
+              href="/dashboard/dcf"
+              color="emerald"
+            />
+            <ModelCard 
+              title="Comps Analysis" 
+              desc="Derive valuation ranges based on public market peer multiples (EV/Rev, P/E)."
+              icon={<Layers className="w-6 h-6" />}
+              href="/dashboard/comps"
+              color="amber"
+            />
+            <ModelCard 
               title="M&A Analysis" 
               desc="Accretion/Dilution analysis for corporate mergers and strategic acquisitions."
-              icon={<Layers className="w-6 h-6" />}
-              href="#"
-              disabled
+              icon={<BarChart4 className="w-6 h-6" />}
+              href="/dashboard/m-and-a"
               color="slate"
             />
           </div>
@@ -166,7 +179,9 @@ function ModelCard({ title, desc, icon, href, disabled, color }: {
   const colorMap: any = {
     blue: "bg-blue-50 text-blue-600",
     purple: "bg-purple-50 text-purple-600",
-    slate: "bg-slate-100 text-slate-400"
+    slate: "bg-slate-100 text-slate-600",
+    emerald: "bg-emerald-50 text-emerald-600",
+    amber: "bg-amber-50 text-amber-600"
   };
 
   return (
