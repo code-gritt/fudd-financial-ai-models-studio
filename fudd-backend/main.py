@@ -10,6 +10,10 @@ from typing import List, Optional
 
 app = FastAPI(title="FUDD Finance", description="Weird finance models that work")
 
+@app.get("/health")
+def health():
+    return {"status": "ok"}
+
 # ----- LEVEL 5: LBO (LEVERAGED BUYOUT) MODEL -----
 from typing import List, Tuple
 

@@ -34,6 +34,12 @@ export const Navbar = () => {
 
           {/* desktop */}
           <nav className="hidden md:flex gap-2">
+            <Link
+              href="/dashboard"
+              className={`text-[17px] ${buttonVariants({ variant: "ghost" })}`}
+            >
+              Dashboard
+            </Link>
             {navbarLinksList.map((route: NavProps, i) => (
               <Link
                 href={route.href}
@@ -49,7 +55,7 @@ export const Navbar = () => {
 
           <div className="hidden md:flex gap-2">
             <Link
-              href="https://github.com/leoMirandaa/shadcn-landing-page.git"
+              href={siteConfig.links.github}
               target="_blank"
               className={`border ${buttonVariants({ variant: "secondary" })}`}
             >

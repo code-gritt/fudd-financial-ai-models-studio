@@ -34,6 +34,13 @@ export const MobileNavFragment = () => {
           <SheetTitle className="font-bold text-xl">{title}</SheetTitle>
         </SheetHeader>
         <nav className="flex flex-col justify-center items-center gap-2 mt-4">
+          <Link
+            href="/dashboard"
+            onClick={() => setIsOpen(false)}
+            className={buttonVariants({ variant: "ghost" })}
+          >
+            Dashboard
+          </Link>
           {navbarLinksList.map(({ href, label }: NavProps) => (
             <Link
               key={label}
@@ -45,7 +52,7 @@ export const MobileNavFragment = () => {
             </Link>
           ))}
           <Link
-            href="https://github.com/leoMirandaa/shadcn-landing-page.git"
+            href={siteConfig.links.github}
             target="_blank"
             className={`w-[110px] border ${buttonVariants({
               variant: "secondary",
