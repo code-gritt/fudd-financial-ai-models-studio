@@ -1,12 +1,12 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import { UserProfile } from "@/lib/api";
+import { User } from "@/lib/api";
 
 interface AuthState {
-  user: UserProfile | null;
+  user: User | null;
   token: string | null;
   isAuthenticated: boolean;
-  login: (user: UserProfile, token: string) => void;
+  login: (user: User, token: string) => void;
   logout: () => void;
 }
 

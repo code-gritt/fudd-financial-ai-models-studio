@@ -13,6 +13,9 @@ const navItems: NavItem[] = [
     { href: '/dashboard', label: 'Overview' },
     { href: '/dashboard/lbo', label: 'LBO Model' },
     { href: '/dashboard/monte-carlo', label: 'Monte Carlo' },
+    { href: '/dashboard/dcf', label: 'Reverse DCF' },
+    { href: '/dashboard/comps', label: 'Comps Analysis' },
+    { href: '/dashboard/m-and-a', label: 'M&A Model' },
 ];
 
 export function AppShell({ title, children }: { title: string; children: React.ReactNode }) {

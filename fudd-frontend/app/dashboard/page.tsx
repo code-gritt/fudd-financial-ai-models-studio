@@ -11,8 +11,6 @@ import {
   BarChart4, 
   Layers, 
   ArrowRight, 
-  CheckCircle2, 
-  AlertCircle, 
   Clock, 
   Zap,
   ShieldCheck
@@ -28,7 +26,7 @@ export default function DashboardPage() {
     setMounted(true);
     getHealth()
       .then((res) => setStatus({ ok: true, value: res.status ?? "online" }))
-      .catch((err) => setStatus({ ok: false, value: "offline" }));
+      .catch(() => setStatus({ ok: false, value: "offline" }));
   }, []);
 
   if (!mounted) return null;

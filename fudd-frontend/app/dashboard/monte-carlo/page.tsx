@@ -25,7 +25,6 @@ import {
   Target, 
   AlertCircle, 
   Play,
-  ArrowRight,
   BarChart2
 } from "lucide-react";
 
