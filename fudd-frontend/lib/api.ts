@@ -45,6 +45,28 @@ export interface LBOOutput {
   summary: string;
 }
 
+export interface MonteCarloInput {
+  base_revenue: number;
+  revenue_growth_mean: number;
+  revenue_growth_std: number;
+  years: number;
+  simulations: number;
+  cogs_percentage: number;
+  op_ex_percentage: number;
+}
+
+export interface MonteCarloOutput {
+  total_simulations: number;
+  mean_net_income: number;
+  median_net_income: number;
+  p10_net_income: number;
+  p90_net_income: number;
+  probability_positive: number;
+  worst_case: number;
+  best_case: number;
+  all_outcomes: number[];
+}
+
 export interface LoginResponse {
   access_token: string;
   token_type: string;
@@ -65,6 +87,19 @@ async function parseJsonOrText(response: Response) {
  */
 export async function apiLbo(input: LBOInput): Promise<LBOOutput> {
   return apiFetch<LBOOutput>("/api/v1/lbo", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(input),
+  });
+}
+
+/**
+ * Run Monte Carlo Simulation
+ */
+export async function apiMonteCarlo(input: MonteCarloInput): Promise<MonteCarloOutput> {
+  return apiFetch<MonteCarloOutput>("/api/v1/monte-carlo", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
