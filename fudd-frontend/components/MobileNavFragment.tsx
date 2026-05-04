@@ -11,7 +11,7 @@ import { navbarLinksList, NavProps } from "@/config/nav";
 import { Menu } from "lucide-react";
 import { Button, buttonVariants } from "./ui/button";
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { siteConfig } from "@/config/site";
 import { useAuthStore } from "@/store/authStore";
@@ -103,6 +103,7 @@ const MobileUserNav = ({ setIsOpen }: { setIsOpen: (open: boolean) => void }) =>
         variant="ghost"
         className="w-full text-red-500 hover:text-red-600 hover:bg-red-50"
         onClick={() => {
+          document.cookie = "fudd-auth-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
           logout();
           setIsOpen(false);
         }}

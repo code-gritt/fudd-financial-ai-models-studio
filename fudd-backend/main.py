@@ -1,14 +1,22 @@
 from __future__ import annotations
-
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
-from typing import Dict, List
+from typing import Dict, List, Optional
 from math import pow
 import random
 import asyncio
-from typing import List, Optional
 
 app = FastAPI(title="FUDD Finance", description="Weird finance models that work")
+
+# ----- CORS CONFIGURATION -----
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # For production, replace with specific origins
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 @app.get("/health")
 def health():
@@ -37,13 +45,12 @@ def login(request: LoginRequest):
     """
     Mock login endpoint. Accepts any password for now.
     """
-    if not request.username or not request.password:
-        raise HTTPException(status_code=400, detail="Username and password required")
+    if request.username != "SUPER" or request.password != "PASS123":
+        raise HTTPException(status_code=401, detail="Invalid username or password")
     
-    # Mock user data based on username
-    name_parts = request.username.split(".")
-    full_name = " ".join([p.capitalize() for p in name_parts]) if len(name_parts) > 1 else request.username.capitalize()
-    initials = "".join([p[0].upper() for p in name_parts]) if len(name_parts) > 1 else request.username[:2].upper()
+    # Mock user data for SUPER user
+    full_name = "Super User"
+    initials = "SU"
     
     return LoginResponse(
         access_token="fake-jwt-token-for-fudd",

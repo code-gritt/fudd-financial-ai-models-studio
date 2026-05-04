@@ -141,7 +141,10 @@ const UserNav = () => {
         <DropdownMenuSeparator />
         <DropdownMenuItem 
           className="text-red-500 focus:text-red-500 cursor-pointer"
-          onClick={() => logout()}
+          onClick={() => {
+            document.cookie = "fudd-auth-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+            logout();
+          }}
         >
           Log out
         </DropdownMenuItem>

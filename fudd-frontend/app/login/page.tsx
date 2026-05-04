@@ -6,18 +6,19 @@ import { useAuthStore } from "@/store/authStore";
 import { login as apiLogin } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { LogoIcon } from "@/components/Icons";
 import { siteConfig } from "@/config/site";
 import Link from "next/link";
-import { Loader2 } from "lucide-react";
+import { Loader2, ArrowRight, ShieldCheck, Zap, Globe } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function LoginPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   const router = useRouter();
   const login = useAuthStore((state) => state.login);
 
@@ -29,6 +30,10 @@ export default function LoginPage() {
     try {
       const response = await apiLogin(username, password);
       login(response.user, response.access_token);
+
+      // Set cookie for middleware route protection
+      document.cookie = `fudd-auth-token=${response.access_token}; path=/; max-age=86400; samesite=lax`;
+
       router.push("/dashboard");
     } catch (err: any) {
       setError(err.message || "Failed to login. Please check your credentials.");
@@ -38,92 +43,161 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950 p-4">
-      <div className="w-full max-w-md space-y-8">
-        <div className="flex flex-col items-center justify-center text-center">
-          <Link href="/" className="flex items-center gap-2 mb-4">
-            <LogoIcon />
-            <span className="font-bold text-2xl">{siteConfig.title}</span>
-          </Link>
-          <h2 className="text-3xl font-extrabold tracking-tight">Welcome back</h2>
-          <p className="text-muted-foreground mt-2">
-            Enter your credentials to access your financial models
-          </p>
-        </div>
+    <div className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[#0a0a0b]">
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-blue-600/10 blur-[120px] animate-pulse" />
+        <div className="absolute bottom-[-10%] right-[-10%] w-[40%] h-[40%] rounded-full bg-purple-600/10 blur-[120px] animate-pulse" style={{ animationDelay: '2s' }} />
+        <div className="absolute top-[20%] right-[10%] w-[20%] h-[20%] rounded-full bg-indigo-600/5 blur-[80px]" />
+      </div>
 
-        <Card className="border-none shadow-xl bg-white dark:bg-slate-900">
-          <CardHeader>
-            <CardTitle>Login</CardTitle>
-            <CardDescription>
-              Use any username and password to log in (Mock System)
-            </CardDescription>
-          </CardHeader>
-          <form onSubmit={handleSubmit}>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <label className="text-sm font-medium" htmlFor="username">
-                  Username
-                </label>
-                <Input
-                  id="username"
-                  placeholder="e.g. warren.buffett"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  required
-                  className="bg-slate-50 dark:bg-slate-800"
-                />
-              </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium" htmlFor="password">
-                  Password
-                </label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  className="bg-slate-50 dark:bg-slate-800"
-                />
-              </div>
-              {error && (
-                <div className="p-3 text-sm text-red-500 bg-red-50 dark:bg-red-900/20 rounded-md border border-red-200 dark:border-red-800">
-                  {error}
+      <div className="container relative z-10 px-4 flex items-center justify-center">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="w-full max-w-[1000px] grid lg:grid-cols-2 gap-0 overflow-hidden rounded-3xl border border-white/10 shadow-2xl bg-black/40 backdrop-blur-xl"
+        >
+          {/* Left Side: Branding/Info */}
+          <div className="hidden lg:flex flex-col justify-between p-12 bg-gradient-to-br from-blue-600/20 to-purple-600/20 border-r border-white/10">
+            <div>
+              <Link href="/" className="flex items-center gap-3 mb-12">
+                <div className="p-2 bg-blue-600 rounded-lg shadow-lg shadow-blue-600/20">
+                  <LogoIcon />
                 </div>
-              )}
-            </CardContent>
-            <CardFooter className="flex flex-col gap-4">
-              <Button 
-                type="submit" 
-                className="w-full h-11 text-lg font-semibold bg-primary hover:bg-primary/90 transition-all duration-300"
+                <span className="font-bold text-2xl tracking-tight text-white uppercase">{siteConfig.title}</span>
+              </Link>
+              
+              <div className="space-y-8">
+                <h1 className="text-4xl font-extrabold text-white leading-tight">
+                  The Future of <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">Financial Modeling</span> is here.
+                </h1>
+                
+                <div className="space-y-4">
+                  {[
+                    { icon: ShieldCheck, text: "Enterprise-grade security standards" },
+                    { icon: Zap, text: "Real-time stochastic simulations" },
+                    { icon: Globe, text: "Global market data integration" }
+                  ].map((item, i) => (
+                    <motion.div 
+                      key={i}
+                      initial={{ opacity: 0, x: -20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: 0.4 + (i * 0.1) }}
+                      className="flex items-center gap-3 text-slate-300"
+                    >
+                      <item.icon className="w-5 h-5 text-blue-400" />
+                      <span className="text-sm font-medium">{item.text}</span>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+            </div>
+            
+            <div className="text-slate-500 text-xs">
+              &copy; 2024 {siteConfig.title} Studio. Trusted by top financial analysts worldwide.
+            </div>
+          </div>
+
+          {/* Right Side: Login Form */}
+          <div className="p-8 lg:p-12 flex flex-col justify-center bg-black/20">
+            <div className="mb-8 lg:hidden flex flex-col items-center">
+               <div className="p-2 bg-blue-600 rounded-lg mb-4">
+                  <LogoIcon />
+                </div>
+                <h2 className="text-2xl font-bold text-white">Welcome Back</h2>
+            </div>
+            
+            <div className="space-y-2 mb-8 hidden lg:block">
+              <h2 className="text-3xl font-bold text-white">Sign In</h2>
+              <p className="text-slate-400">Enter your credentials to access your studio</p>
+            </div>
+
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <label className="text-sm font-medium text-slate-300 ml-1" htmlFor="username">
+                    Username
+                  </label>
+                  <div className="relative group">
+                    <Input
+                      id="username"
+                      placeholder="e.g. SUPER"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      required
+                      className="h-12 bg-white/5 border-white/10 text-white placeholder:text-slate-600 focus:border-blue-500/50 focus:ring-blue-500/20 transition-all rounded-xl"
+                    />
+                  </div>
+                </div>
+                
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between ml-1">
+                    <label className="text-sm font-medium text-slate-300" htmlFor="password">
+                      Password
+                    </label>
+                    <Link href="#" className="text-xs text-blue-400 hover:text-blue-300 transition-colors">
+                      Forgot password?
+                    </Link>
+                  </div>
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="••••••••"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                    className="h-12 bg-white/5 border-white/10 text-white placeholder:text-slate-600 focus:border-blue-500/50 focus:ring-blue-500/20 transition-all rounded-xl"
+                  />
+                </div>
+              </div>
+
+              <AnimatePresence mode="wait">
+                {error && (
+                  <motion.div 
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="p-4 text-sm text-red-400 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center gap-2"
+                  >
+                    <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+                    {error}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              <Button
+                type="submit"
                 disabled={isLoading}
+                className="w-full h-12 text-base font-bold bg-blue-600 hover:bg-blue-500 text-white rounded-xl shadow-lg shadow-blue-600/20 transition-all duration-300 group overflow-hidden relative"
               >
                 {isLoading ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Authenticating...
-                  </>
+                  <Loader2 className="h-5 w-5 animate-spin" />
                 ) : (
-                  "Sign In"
+                  <span className="flex items-center justify-center gap-2">
+                    Access Dashboard <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </span>
                 )}
+                {/* Shine Effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-[-20deg] translate-x-[-150%] group-hover:translate-x-[150%] transition-transform duration-700" />
               </Button>
-              <div className="text-center text-sm text-muted-foreground">
-                Don't have an account?{" "}
-                <Link href="#" className="text-primary hover:underline font-medium">
-                  Request Access
-                </Link>
-              </div>
-            </CardFooter>
-          </form>
-        </Card>
 
-        <div className="text-center">
-          <p className="text-xs text-muted-foreground uppercase tracking-widest">
-            &copy; 2024 {siteConfig.title} Studio. All rights reserved.
-          </p>
-        </div>
+              <div className="pt-4 text-center">
+                <p className="text-sm text-slate-500">
+                  New to FUDD?{" "}
+                  <Link href="#" className="text-white hover:text-blue-400 transition-colors font-semibold">
+                    Request an invite
+                  </Link>
+                </p>
+              </div>
+            </form>
+          </div>
+        </motion.div>
       </div>
+
+      {/* Decorative Circles */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] border border-white/5 rounded-full pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1200px] h-[1200px] border border-white/5 rounded-full pointer-events-none" />
     </div>
   );
 }
