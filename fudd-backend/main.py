@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
@@ -13,6 +13,48 @@ app = FastAPI(title="FUDD Finance", description="Weird finance models that work"
 @app.get("/health")
 def health():
     return {"status": "ok"}
+
+
+# ----- AUTH MODELS -----
+class LoginRequest(BaseModel):
+    username: str
+    password: str
+
+class UserProfile(BaseModel):
+    id: str
+    username: str
+    email: str
+    full_name: str
+    initials: str
+
+class LoginResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
+    user: UserProfile
+
+@app.post("/api/v1/login", response_model=LoginResponse)
+def login(request: LoginRequest):
+    """
+    Mock login endpoint. Accepts any password for now.
+    """
+    if not request.username or not request.password:
+        raise HTTPException(status_code=400, detail="Username and password required")
+    
+    # Mock user data based on username
+    name_parts = request.username.split(".")
+    full_name = " ".join([p.capitalize() for p in name_parts]) if len(name_parts) > 1 else request.username.capitalize()
+    initials = "".join([p[0].upper() for p in name_parts]) if len(name_parts) > 1 else request.username[:2].upper()
+    
+    return LoginResponse(
+        access_token="fake-jwt-token-for-fudd",
+        user=UserProfile(
+            id="user-123",
+            username=request.username,
+            email=f"{request.username}@fudd.finance",
+            full_name=full_name,
+            initials=initials
+        )
+    )
 
 # ----- LEVEL 5: LBO (LEVERAGED BUYOUT) MODEL -----
 from typing import List, Tuple

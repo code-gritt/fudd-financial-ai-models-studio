@@ -9,11 +9,12 @@ import {
 } from "@/components/ui/sheet";
 import { navbarLinksList, NavProps } from "@/config/nav";
 import { Menu } from "lucide-react";
-import { buttonVariants } from "./ui/button";
+import { Button, buttonVariants } from "./ui/button";
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
 import { useState } from "react";
 import Link from "next/link";
 import { siteConfig } from "@/config/site";
+import { useAuthStore } from "@/store/authStore";
 const { title } = siteConfig;
 
 export const MobileNavFragment = () => {
@@ -61,8 +62,53 @@ export const MobileNavFragment = () => {
             <GitHubLogoIcon className="mr-2 w-5 h-5" />
             Github
           </Link>
+          <MobileUserNav setIsOpen={setIsOpen} />
         </nav>
       </SheetContent>
     </Sheet>
+  );
+};
+
+const MobileUserNav = ({ setIsOpen }: { setIsOpen: (open: boolean) => void }) => {
+  const { isAuthenticated, logout, user } = useAuthStore();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
+
+  if (!isAuthenticated) {
+    return (
+      <Link
+        href="/login"
+        onClick={() => setIsOpen(false)}
+        className={`w-[110px] ${buttonVariants({ variant: "default" })}`}
+      >
+        Login
+      </Link>
+    );
+  }
+
+  return (
+    <div className="flex flex-col items-center gap-2 w-full mt-2 border-t pt-4">
+      <div className="flex items-center gap-2 mb-2">
+        <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs">
+          {user?.initials}
+        </div>
+        <span className="text-sm font-medium">{user?.full_name}</span>
+      </div>
+      <Button
+        variant="ghost"
+        className="w-full text-red-500 hover:text-red-600 hover:bg-red-50"
+        onClick={() => {
+          logout();
+          setIsOpen(false);
+        }}
+      >
+        Log out
+      </Button>
+    </div>
   );
 };
