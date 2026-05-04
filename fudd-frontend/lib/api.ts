@@ -171,13 +171,10 @@ export async function getHealth() {
 }
 
 export async function login(username: string, password: string): Promise<LoginResponse> {
-  const params = new URLSearchParams();
-  params.append("username", username);
-  params.append("password", password);
-
   return apiFetch<LoginResponse>("/api/v1/login", {
     method: "POST",
-    body: params,
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username, password }),
   });
 }
 
