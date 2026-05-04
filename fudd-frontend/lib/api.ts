@@ -10,6 +10,41 @@ export interface UserProfile {
   initials: string;
 }
 
+export interface DebtSchedule {
+  year: number;
+  beginning_balance: number;
+  interest: number;
+  principal_payment: number;
+  ending_balance: number;
+}
+
+export interface LBOInput {
+  ebitda: number;
+  ebitda_growth_rate: number;
+  purchase_ebitda_multiple: number;
+  exit_ebitda_multiple: number;
+  senior_debt_percent: number;
+  senior_interest_rate: number;
+  sub_debt_percent: number;
+  sub_interest_rate: number;
+  holding_period_years: number;
+  initial_equity_percent: number;
+}
+
+export interface LBOOutput {
+  purchase_price: number;
+  total_debt: number;
+  initial_equity: number;
+  exit_ebitda: number;
+  exit_enterprise_value: number;
+  exit_debt_balance: number;
+  exit_equity_value: number;
+  irr_percent: number;
+  cash_on_cash_return: number;
+  debt_schedule: DebtSchedule[];
+  summary: string;
+}
+
 export interface LoginResponse {
   access_token: string;
   token_type: string;
@@ -23,6 +58,19 @@ async function parseJsonOrText(response: Response) {
   const contentType = response.headers.get("content-type") ?? "";
   if (contentType.includes("application/json")) return response.json();
   return response.text();
+}
+
+/**
+ * Run LBO Model
+ */
+export async function apiLbo(input: LBOInput): Promise<LBOOutput> {
+  return apiFetch<LBOOutput>("/api/v1/lbo", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(input),
+  });
 }
 
 export async function apiFetch<T>(
