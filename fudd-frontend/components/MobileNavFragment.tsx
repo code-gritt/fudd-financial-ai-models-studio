@@ -13,6 +13,7 @@ import { Button, buttonVariants } from "./ui/button";
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { siteConfig } from "@/config/site";
 import { useAuthStore } from "@/store/authStore";
 const { title } = siteConfig;
@@ -72,6 +73,7 @@ export const MobileNavFragment = () => {
 const MobileUserNav = ({ setIsOpen }: { setIsOpen: (open: boolean) => void }) => {
   const { isAuthenticated, logout, user } = useAuthStore();
   const [mounted, setMounted] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     setMounted(true);
@@ -106,6 +108,7 @@ const MobileUserNav = ({ setIsOpen }: { setIsOpen: (open: boolean) => void }) =>
           document.cookie = "fudd-auth-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
           logout();
           setIsOpen(false);
+          router.push("/login");
         }}
       >
         Log out

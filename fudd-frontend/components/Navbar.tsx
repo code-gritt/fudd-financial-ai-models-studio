@@ -14,6 +14,7 @@ import { MobileNavFragment } from "@/components/MobileNavFragment";
 import { navbarLinksList, NavProps } from "@/config/nav";
 import { siteConfig } from "@/config/site";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAuthStore } from "@/store/authStore";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
@@ -90,6 +91,7 @@ export const Navbar = () => {
 const UserNav = () => {
   const { user, isAuthenticated, logout } = useAuthStore();
   const [mounted, setMounted] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     setMounted(true);
@@ -144,6 +146,7 @@ const UserNav = () => {
           onClick={() => {
             document.cookie = "fudd-auth-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
             logout();
+            router.push("/login");
           }}
         >
           Log out
