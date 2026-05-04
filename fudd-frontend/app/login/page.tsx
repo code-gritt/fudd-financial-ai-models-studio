@@ -127,7 +127,7 @@ export default function LoginPage() {
                                     </label>
                                     <Input
                                         id="username"
-                                        placeholder="e.g. SUPER"
+                                        placeholder="Enter SUPER"
                                         value={username}
                                         onChange={(e) => setUsername(e.target.value)}
                                         required
@@ -147,7 +147,7 @@ export default function LoginPage() {
                                     <Input
                                         id="password"
                                         type="password"
-                                        placeholder="••••••••"
+                                        placeholder="Enter PASS123"
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
                                         required
