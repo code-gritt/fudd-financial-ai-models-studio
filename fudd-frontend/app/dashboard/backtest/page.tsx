@@ -43,8 +43,14 @@ export default function BacktestPage() {
         try {
             const data = await apiBacktest(inputs);
             setResult(data);
-        } catch (error) {
+            toast.success('Simulation Complete', {
+                description: `Backtest for ${inputs.ticker} executed successfully.`
+            });
+        } catch (error: any) {
             console.error('Backtest failed:', error);
+            toast.error('Simulation Failed', {
+                description: error.message || 'An unexpected error occurred.'
+            });
         } finally {
             setLoading(false);
         }
