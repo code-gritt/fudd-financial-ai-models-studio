@@ -16,6 +16,7 @@ const navItems: NavItem[] = [
     { href: '/dashboard/dcf', label: 'Reverse DCF' },
     { href: '/dashboard/comps', label: 'Comps Analysis' },
     { href: '/dashboard/m-and-a', label: 'M&A Model' },
+    { href: '/dashboard/backtest', label: 'Backtester' },
 ];
 
 export function AppShell({ title, children }: { title: string; children: React.ReactNode }) {
