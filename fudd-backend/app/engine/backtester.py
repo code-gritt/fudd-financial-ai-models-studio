@@ -10,20 +10,31 @@ def run_backtest(input_data: BacktestInput) -> BacktestOutput:
     Uses yfinance for reliable data ingestion and Pandas for vectorized logic.
     """
     # Fetch Data
-    # We download slightly more data to account for the SMA window lookback
-    lookback_days = input_data.long_window + 30
+    lookback_days = input_data.long_window + 60  # Increased buffer
     start_dt = pd.to_datetime(input_data.start_date) - pd.Timedelta(days=lookback_days)
     
-    df = yf.download(
-        input_data.ticker, 
-        start=start_dt.strftime('%Y-%m-%d'), 
+    # Use Ticker.history for more reliable data fetching in cloud environments
+    ticker_obj = yf.Ticker(input_data.ticker)
+    df = ticker_obj.history(
+        start=start_dt.strftime('%Y-%m-%d'),
         end=input_data.end_date,
-        progress=False,
-        auto_adjust=True
+        interval="1d",
+        auto_adjust=True,
+        actions=False
     )
     
     if df.empty:
-        raise ValueError(f"No data found for ticker {input_data.ticker}. Please check the symbol and date range.")
+        # Fallback to download if history fails
+        df = yf.download(
+            input_data.ticker,
+            start=start_dt.strftime('%Y-%m-%d'),
+            end=input_data.end_date,
+            progress=False,
+            auto_adjust=True
+        )
+
+    if df.empty:
+        raise ValueError(f"No data found for ticker {input_data.ticker} between {start_dt.date()} and {input_data.end_date}. This may be due to an invalid symbol or Yahoo Finance rate limiting.")
     
     # Handle potential multi-index columns from newer yfinance
     if isinstance(df.columns, pd.MultiIndex):
