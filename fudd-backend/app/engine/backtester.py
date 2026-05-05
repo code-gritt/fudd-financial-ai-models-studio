@@ -1,8 +1,15 @@
 import yfinance as yf
 import pandas as pd
 import numpy as np
+import requests
 from app.core.schemas import BacktestInput, BacktestOutput, BacktestPerformance
 from app.analytics.risk import calculate_sharpe_ratio, calculate_max_drawdown
+
+# Set up a custom session to bypass Yahoo Finance blocks on cloud platforms
+session = requests.Session()
+session.headers.update({
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
+})
 
 def run_backtest(input_data: BacktestInput) -> BacktestOutput:
     """
@@ -14,7 +21,7 @@ def run_backtest(input_data: BacktestInput) -> BacktestOutput:
     start_dt = pd.to_datetime(input_data.start_date) - pd.Timedelta(days=lookback_days)
     
     # Use Ticker.history for more reliable data fetching in cloud environments
-    ticker_obj = yf.Ticker(input_data.ticker)
+    ticker_obj = yf.Ticker(input_data.ticker, session=session)
     df = ticker_obj.history(
         start=start_dt.strftime('%Y-%m-%d'),
         end=input_data.end_date,
@@ -30,7 +37,8 @@ def run_backtest(input_data: BacktestInput) -> BacktestOutput:
             start=start_dt.strftime('%Y-%m-%d'),
             end=input_data.end_date,
             progress=False,
-            auto_adjust=True
+            auto_adjust=True,
+            session=session
         )
 
     if df.empty:
