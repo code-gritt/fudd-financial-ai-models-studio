@@ -1,4 +1,5 @@
 from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel
 from app.core.schemas import (
     LoginRequest, LoginResponse, UserProfile,
     LBOInput, LBOOutput,
@@ -9,6 +10,7 @@ from app.core.schemas import (
     BusinessAssumptions, ModelGeneratorOutput,
     BacktestInput, BacktestOutput
 )
+from app.ml.random_forest import get_ml_signal
 from app.models.financial_logic import (
     run_lbo_model, run_comps_analysis, run_reverse_dcf,
     run_m_and_a_model, run_financial_model_gen
@@ -56,6 +58,26 @@ def monte_carlo_endpoint(input_data: MonteCarloInput):
 @router.post("/m-and-a", response_model=MAndAOutput)
 def m_and_a_endpoint(input_data: MAndAInput):
     return run_m_and_a_model(input_data)
+
+class MLSignalInput(BaseModel):
+    ticker: str
+    lookback_days: int = 500
+
+class MLSignalOutput(BaseModel):
+    ticker: str
+    signal: str
+    confidence: float
+    predicted_direction: str
+    training_data_points: int
+    model_accuracy: float
+
+@router.post("/ml/signal", response_model=MLSignalOutput)
+async def ml_signal(input_data: MLSignalInput):
+    """ML-powered buy/sell signal using Random Forest"""
+    result = get_ml_signal(input_data.ticker, input_data.lookback_days)
+    if result.get("signal") == "ERROR":
+        raise HTTPException(status_code=400, detail=result.get("message", "ML signal error"))
+    return result
 
 @router.post("/backtest", response_model=BacktestOutput)
 def backtest_endpoint(input_data: BacktestInput):
