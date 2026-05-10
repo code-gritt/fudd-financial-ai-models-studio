@@ -1,15 +1,8 @@
 import yfinance as yf
 import pandas as pd
 import numpy as np
-import requests
 from app.core.schemas import BacktestInput, BacktestOutput, BacktestPerformance
 from app.analytics.risk import calculate_sharpe_ratio, calculate_max_drawdown
-
-# Set up a custom session to bypass Yahoo Finance blocks on cloud platforms
-session = requests.Session()
-session.headers.update({
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
-})
 
 def run_backtest(input_data: BacktestInput) -> BacktestOutput:
     """
@@ -21,7 +14,7 @@ def run_backtest(input_data: BacktestInput) -> BacktestOutput:
     start_dt = pd.to_datetime(input_data.start_date) - pd.Timedelta(days=lookback_days)
     
     # Use Ticker.history for more reliable data fetching in cloud environments
-    ticker_obj = yf.Ticker(input_data.ticker, session=session)
+    ticker_obj = yf.Ticker(input_data.ticker)
     df = ticker_obj.history(
         start=start_dt.strftime('%Y-%m-%d'),
         end=input_data.end_date,
@@ -37,8 +30,7 @@ def run_backtest(input_data: BacktestInput) -> BacktestOutput:
             start=start_dt.strftime('%Y-%m-%d'),
             end=input_data.end_date,
             progress=False,
-            auto_adjust=True,
-            session=session
+            auto_adjust=True
         )
 
     if df.empty:
@@ -72,8 +64,11 @@ def run_backtest(input_data: BacktestInput) -> BacktestOutput:
     # so we earn the return of the NEXT day.
     df['Strategy_Returns'] = df['Signal'].shift(1) * df['Returns']
     
-    # Filter to requested date range
-    df = df[df.index >= pd.to_datetime(input_data.start_date)]
+    # Filter to requested date range using matching timezone awareness
+    start_ts = pd.to_datetime(input_data.start_date)
+    if df.index.tz is not None and start_ts.tzinfo is None:
+        start_ts = start_ts.tz_localize(df.index.tz)
+    df = df[df.index >= start_ts]
     
     if df.empty:
         raise ValueError("No data available for the specific date range selected.")
