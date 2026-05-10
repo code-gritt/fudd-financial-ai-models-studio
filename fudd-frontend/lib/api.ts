@@ -136,6 +136,20 @@ export interface MAndAOutput {
     explanation: string;
 }
 
+export interface MLSignalInput {
+    ticker: string;
+    lookback_days: number;
+}
+
+export interface MLSignalOutput {
+    ticker: string;
+    signal: string;
+    confidence: number;
+    predicted_direction: string;
+    training_data_points: number;
+    model_accuracy: number;
+}
+
 // --- Auth Types ---
 export interface LoginResponse {
     access_token: string;
@@ -218,6 +232,14 @@ export async function apiComps(input: CompsInput): Promise<CompsOutput> {
 
 export async function apiMAndA(input: MAndAInput): Promise<MAndAOutput> {
     return apiFetch<MAndAOutput>('/api/v1/m-and-a', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(input),
+    });
+}
+
+export async function apiMlSignal(input: MLSignalInput): Promise<MLSignalOutput> {
+    return apiFetch<MLSignalOutput>('/api/v1/ml/signal', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(input),

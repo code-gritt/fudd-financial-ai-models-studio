@@ -79,6 +79,11 @@ async def ml_signal(input_data: MLSignalInput):
         raise HTTPException(status_code=400, detail=result.get("message", "ML signal error"))
     return result
 
+# Short alias that’s easier to spot/call.
+@router.post("/ml-signal", response_model=MLSignalOutput, include_in_schema=True)
+async def ml_signal_alias(input_data: MLSignalInput):
+    return await ml_signal(input_data)
+
 @router.post("/backtest", response_model=BacktestOutput)
 def backtest_endpoint(input_data: BacktestInput):
     try:

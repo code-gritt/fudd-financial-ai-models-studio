@@ -19,6 +19,7 @@ import { Label } from '@/components/ui/label';
 import { AppShell } from '@/components/dashboard/AppShell';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "sonner";
+import MLSignal from '@/components/MLSignal';
 
 export default function BacktestPage() {
     const [loading, setLoading] = useState(false);
@@ -192,6 +193,7 @@ export default function BacktestPage() {
                                 </Button>
                             </CardContent>
                         </Card>
+                        <MLSignal />
                     </div>
 
                     {/* Main Content */}
