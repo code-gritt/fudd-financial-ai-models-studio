@@ -14,7 +14,6 @@ from app.models.financial_logic import (
     run_m_and_a_model, run_financial_model_gen
 )
 from app.engine.monte_carlo import run_monte_carlo
-from app.engine.backtester import run_backtest
 
 router = APIRouter(prefix="/api/v1")
 
@@ -61,6 +60,7 @@ def m_and_a_endpoint(input_data: MAndAInput):
 @router.post("/backtest", response_model=BacktestOutput)
 def backtest_endpoint(input_data: BacktestInput):
     try:
+        from app.engine.backtester import run_backtest
         return run_backtest(input_data)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
