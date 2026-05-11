@@ -25,7 +25,7 @@ export default function AIAnalysis() {
         setError(null);
 
         try {
-            const res = await fetch('http://localhost:8000/api/v1/ai/analyze', {
+            const res = await fetch('https://fudd-backend.onrender.com/api/v1/ai/analyze', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ ticker }),
