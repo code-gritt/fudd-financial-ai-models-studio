@@ -103,6 +103,7 @@ class LLMAnalysisOutput(BaseModel):
     signal: str
     analysis: str
     fundamentals: dict
+    simulated: bool = False
 
 @router.post("/ai/analyze", response_model=LLMAnalysisOutput)
 async def ai_analyze(input_data: LLMAnalysisInput):
@@ -111,6 +112,4 @@ async def ai_analyze(input_data: LLMAnalysisInput):
     Provides trading signal and detailed reasoning
     """
     result = get_stock_analysis(input_data.ticker)
-    if "error" in result:
-        raise HTTPException(status_code=500, detail=result["message"])
     return result

@@ -7,7 +7,11 @@ app = FastAPI(title="FUDD Finance Studio", description="Modular Quantitative Fin
 # ----- CORS CONFIGURATION -----
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=[
+        "https://fudd-financial-unified-data-dashboard.netlify.app",
+        "http://localhost:3000",
+        "http://localhost:3001"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
