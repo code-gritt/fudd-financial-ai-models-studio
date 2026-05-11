@@ -12,7 +12,6 @@ interface AnalysisData {
     signal: string;
     analysis: string;
     fundamentals: Record<string, any>;
-    simulated?: boolean;
 }
 
 export default function AIAnalysis() {
@@ -26,7 +25,7 @@ export default function AIAnalysis() {
         setError(null);
 
         try {
-            const res = await fetch('https://fudd-backend.onrender.com/api/v1/ai/analyze', {
+            const res = await fetch('http://localhost:8000/api/v1/ai/analyze', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ ticker }),
@@ -78,11 +77,6 @@ export default function AIAnalysis() {
                                 {analysis.price_change_percent > 0 ? '+' : ''}
                                 {analysis.price_change_percent}%
                             </span>
-                            {analysis.simulated && (
-                                <span className="px-2 py-0.5 bg-amber-100 text-amber-700 rounded text-[10px] font-bold uppercase tracking-wider">
-                                    Simulated
-                                </span>
-                            )}
                             <span
                                 className={`px-2 py-1 rounded text-sm font-bold ${
                                     analysis.signal === 'BUY'

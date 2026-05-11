@@ -1,14 +1,25 @@
 import ollama
 import yfinance as yf
 import pandas as pd
+import requests
 
 def get_stock_analysis(ticker: str) -> dict:
     """
     Use LLM (deepseek-r1) to analyze a stock and provide trading insights
     """
+    # Fix common ticker name issues
+    if ticker.upper() == "NVIDIA": ticker = "NVDA"
+    if ticker.upper() == "GOOGLE": ticker = "GOOGL"
+    
+    # Use a custom session with a User-Agent to bypass cloud blocks (Render/AWS/etc)
+    session = requests.Session()
+    session.headers.update({
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36'
+    })
+
     try:
         # 1. Get current stock data
-        stock = yf.Ticker(ticker)
+        stock = yf.Ticker(ticker, session=session)
         info = stock.info
         
         # 2. Get recent price data
