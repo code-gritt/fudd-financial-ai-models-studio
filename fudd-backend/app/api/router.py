@@ -11,6 +11,7 @@ from app.core.schemas import (
     BacktestInput, BacktestOutput
 )
 from app.ml.random_forest import get_ml_signal
+from app.ml.llm_analyzer import get_stock_analysis
 from app.models.financial_logic import (
     run_lbo_model, run_comps_analysis, run_reverse_dcf,
     run_m_and_a_model, run_financial_model_gen
@@ -91,3 +92,25 @@ def backtest_endpoint(input_data: BacktestInput):
         return run_backtest(input_data)
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+
+class LLMAnalysisInput(BaseModel):
+    ticker: str
+
+class LLMAnalysisOutput(BaseModel):
+    ticker: str
+    current_price: float
+    price_change_percent: float
+    signal: str
+    analysis: str
+    fundamentals: dict
+
+@router.post("/ai/analyze", response_model=LLMAnalysisOutput)
+async def ai_analyze(input_data: LLMAnalysisInput):
+    """
+    AI-powered stock analysis using local LLM (deepseek-r1)
+    Provides trading signal and detailed reasoning
+    """
+    result = get_stock_analysis(input_data.ticker)
+    if "error" in result:
+        raise HTTPException(status_code=500, detail=result["message"])
+    return result

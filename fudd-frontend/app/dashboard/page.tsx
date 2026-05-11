@@ -16,6 +16,7 @@ import {
   ShieldCheck
 } from "lucide-react";
 import Link from "next/link";
+import AIAnalysis from "@/components/AIAnalysis";
 
 export default function DashboardPage() {
   const { user } = useAuthStore();
@@ -161,6 +162,41 @@ export default function DashboardPage() {
               href="/dashboard/m-and-a"
               color="slate"
             />
+          </div>
+        </div>
+
+        {/* AI Insights Section */}
+        <div className="grid lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 space-y-4">
+             <h3 className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+                <Zap className="w-5 h-5 text-amber-500" />
+                AI Market Insights
+             </h3>
+             <AIAnalysis />
+          </div>
+          
+          <div className="space-y-4">
+             <h3 className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
+                <TrendingUp className="w-5 h-5 text-blue-600" />
+                Recent Activity
+             </h3>
+             <Card>
+                <CardContent className="p-0">
+                   <div className="divide-y">
+                      {[1, 2, 3].map((i) => (
+                         <div key={i} className="p-4 flex items-center gap-4 hover:bg-slate-50 transition-colors">
+                            <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 font-bold">
+                               {i === 1 ? 'AAPL' : i === 2 ? 'TSLA' : 'MSFT'}
+                            </div>
+                            <div>
+                               <div className="text-sm font-bold">AI Analysis Run</div>
+                               <div className="text-xs text-slate-400">2 hours ago</div>
+                            </div>
+                         </div>
+                      ))}
+                   </div>
+                </CardContent>
+             </Card>
           </div>
         </div>
       </div>
