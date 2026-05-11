@@ -9,8 +9,11 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=[
         "https://fudd-financial-unified-data-dashboard.netlify.app",
+        "https://fudd-financial-unified-data-dashboard.netlify.app/",
         "http://localhost:3000",
-        "http://localhost:3001"
+        "http://localhost:3001",
+        "http://localhost:5173",
+        "http://localhost:8000"
     ],
     allow_credentials=True,
     allow_methods=["*"],
