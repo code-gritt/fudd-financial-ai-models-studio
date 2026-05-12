@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Sparkles, TrendingUp, TrendingDown, Info, Gauge, Zap } from 'lucide-react';
 
 interface AnalysisData {
     ticker: string;
@@ -63,34 +64,54 @@ export default function AIAnalysis() {
                 </div>
 
                 {analysis && (
-                    <div className="space-y-3">
-                        <div className="flex justify-between items-center">
-                            <span className="font-bold text-lg">{analysis.ticker}</span>
-                            <span className="font-semibold">${analysis.current_price}</span>
-                            <span
-                                className={
-                                    analysis.price_change_percent > 0
-                                        ? 'text-green-600'
-                                        : 'text-red-600'
-                                }
-                            >
-                                {analysis.price_change_percent > 0 ? '+' : ''}
-                                {analysis.price_change_percent}%
-                            </span>
-                            <span
-                                className={`px-2 py-1 rounded text-sm font-bold ${
-                                    analysis.signal === 'BUY'
-                                        ? 'bg-green-100 text-green-700'
-                                        : analysis.signal === 'SELL'
-                                        ? 'bg-red-100 text-red-700'
-                                        : 'bg-gray-100 text-gray-700'
-                                }`}
-                            >
-                                {analysis.signal}
-                            </span>
-                        </div>
-                        <div className="bg-muted p-4 rounded-lg text-sm whitespace-pre-wrap leading-relaxed border">
-                            {analysis.analysis}
+                    <div className="space-y-4 pt-2">
+                        <div className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
+                            {/* Header */}
+                            <div className={`p-4 border-b ${analysis.signal === 'BUY' ? 'bg-emerald-50 border-emerald-100' : analysis.signal === 'SELL' ? 'bg-rose-50 border-rose-100' : 'bg-slate-50 border-slate-100'}`}>
+                                <div className="flex justify-between items-end">
+                                    <div>
+                                        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">LLM Signal</p>
+                                        <div className="flex items-center gap-2">
+                                            <p className={`text-2xl font-black tracking-tight ${analysis.signal === 'BUY' ? 'text-emerald-600' : analysis.signal === 'SELL' ? 'text-rose-600' : 'text-slate-600'}`}>
+                                                {analysis.signal}
+                                            </p>
+                                            <Sparkles className={`h-5 w-5 ${analysis.signal === 'BUY' ? 'text-emerald-500' : analysis.signal === 'SELL' ? 'text-rose-500' : 'text-slate-400'}`} />
+                                        </div>
+                                    </div>
+                                    <div className="text-right">
+                                        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">{analysis.ticker}</p>
+                                        <p className="text-xl font-black text-slate-900">${analysis.current_price}</p>
+                                        <p className={`text-xs font-bold ${analysis.price_change_percent > 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
+                                            {analysis.price_change_percent > 0 ? '+' : ''}{analysis.price_change_percent}%
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            {/* Content */}
+                            <div className="p-4 space-y-4 bg-white">
+                                <div className="space-y-2">
+                                    <div className="flex items-center gap-1.5 mb-1">
+                                        <Zap className="h-3.5 w-3.5 text-amber-500" />
+                                        <h4 className="text-[10px] font-bold text-slate-700 uppercase tracking-widest">Deepseek Insight</h4>
+                                    </div>
+                                    <div className="bg-slate-50 p-4 rounded-xl text-xs whitespace-pre-wrap leading-relaxed border border-slate-100 text-slate-600 font-medium">
+                                        {analysis.analysis}
+                                    </div>
+                                </div>
+                                
+                                <div className="space-y-2 pt-2 border-t border-slate-100">
+                                    <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Fundamentals</p>
+                                    <div className="space-y-1.5">
+                                        {Object.entries(analysis.fundamentals).map(([key, value]) => (
+                                            <div key={key} className="flex justify-between items-center p-2 rounded-lg bg-slate-50 border border-slate-100">
+                                                <span className="text-[10px] font-bold text-slate-400 uppercase">{key.replace(/_/g, ' ')}</span>
+                                                <span className="text-xs font-black text-slate-600">{value}</span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 )}

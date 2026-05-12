@@ -201,7 +201,7 @@ export default function BacktestPage() {
                         {result ? (
                             <>
                                 {/* Stats Grid */}
-                                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
                                     <Card className="bg-blue-600 text-white shadow-lg border-none overflow-hidden relative">
                                         <div className="absolute top-[-20%] right-[-10%] w-24 h-24 bg-white/10 rounded-full blur-2xl" />
                                         <CardContent className="p-4">
@@ -239,6 +239,24 @@ export default function BacktestPage() {
                                             </p>
                                             <div className="text-2xl font-extrabold text-slate-900">
                                                 {result.performance.win_rate}%
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+
+                                    <Card className="bg-white border border-slate-100 shadow-sm overflow-hidden relative">
+                                        <CardContent className="p-4">
+                                            <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mb-1">RMSE (Error)</p>
+                                            <div className="text-2xl font-extrabold text-blue-600">
+                                                {result.performance.rmse}
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+
+                                    <Card className="bg-white border border-slate-100 shadow-sm overflow-hidden relative">
+                                        <CardContent className="p-4">
+                                            <p className="text-xs text-slate-500 font-bold uppercase tracking-widest mb-1">MAE (Error)</p>
+                                            <div className="text-2xl font-extrabold text-blue-600">
+                                                {result.performance.mae}
                                             </div>
                                         </CardContent>
                                     </Card>

@@ -168,6 +168,8 @@ class BacktestPerformance(BaseModel):
     sharpe_ratio: float
     max_drawdown_percent: float
     win_rate: float
+    rmse: float
+    mae: float
 
 class BacktestOutput(BaseModel):
     ticker: str

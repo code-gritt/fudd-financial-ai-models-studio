@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.model_selection import train_test_split
 import yfinance as yf
 
@@ -61,5 +61,32 @@ def get_ml_signal(ticker: str, lookback_days: int = 500):
         "confidence": round(confidence * 100, 1),
         "predicted_direction": "UP" if prediction == 1 else "DOWN",
         "training_data_points": len(df),
-        "model_accuracy": round(model.score(X_test, y_test) * 100, 1)
+        "model_accuracy": round(model.score(X_test, y_test) * 100, 1),
+        "prediction_metrics": get_regression_metrics(X, df['Close'], split_idx)
+    }
+
+def get_regression_metrics(X, prices, split_idx):
+    """
+    Train a secondary regressor to predict actual prices and calculate RMSE/MAE
+    """
+    from app.analytics.risk import calculate_rmse, calculate_mae
+    
+    # Target is next day's price
+    y_reg = prices.shift(-1).dropna()
+    X_reg = X.iloc[:-1] # Match length
+    
+    # Split
+    X_train, X_test = X_reg[:split_idx], X_reg[split_idx:]
+    y_train, y_test = y_reg[:split_idx], y_reg[split_idx:]
+    
+    reg_model = RandomForestRegressor(n_estimators=50, random_state=42)
+    reg_model.fit(X_train, y_train)
+    
+    preds = reg_model.predict(X_test)
+    rmse = calculate_rmse(preds, y_test)
+    mae = calculate_mae(preds, y_test)
+    
+    return {
+        "rmse": round(rmse, 2),
+        "mae": round(mae, 2)
     }

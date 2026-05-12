@@ -148,6 +148,10 @@ export interface MLSignalOutput {
     predicted_direction: string;
     training_data_points: number;
     model_accuracy: number;
+    prediction_metrics?: {
+        rmse: number;
+        mae: number;
+    };
 }
 
 // --- Auth Types ---
@@ -262,6 +266,8 @@ export interface BacktestPerformance {
     sharpe_ratio: number;
     max_drawdown_percent: number;
     win_rate: number;
+    rmse: number;
+    mae: number;
 }
 
 export interface BacktestOutput {

@@ -2,7 +2,7 @@ import yfinance as yf
 import pandas as pd
 import numpy as np
 from app.core.schemas import BacktestInput, BacktestOutput, BacktestPerformance
-from app.analytics.risk import calculate_sharpe_ratio, calculate_max_drawdown
+from app.analytics.risk import calculate_sharpe_ratio, calculate_max_drawdown, calculate_rmse, calculate_mae
 
 def run_backtest(input_data: BacktestInput) -> BacktestOutput:
     """
@@ -94,6 +94,12 @@ def run_backtest(input_data: BacktestInput) -> BacktestOutput:
     # Win Rate
     win_rate = len(daily_returns[daily_returns > 0]) / len(daily_returns) if len(daily_returns) > 0 else 0
     
+    # RMSE/MAE - Using SMA_Short as "predicted" price vs actual Close
+    # We drop NaNs to ensure equal length
+    pred_data = df[['SMA_Short', 'Close']].dropna()
+    rmse = calculate_rmse(pred_data['SMA_Short'], pred_data['Close'])
+    mae = calculate_mae(pred_data['SMA_Short'], pred_data['Close'])
+    
     # Signals (Buy/Sell events)
     df['Position_Change'] = df['Signal'].diff()
     buy_signals = df[df['Position_Change'] == 1]
@@ -115,7 +121,9 @@ def run_backtest(input_data: BacktestInput) -> BacktestOutput:
             annualized_return_percent=float(round(annualized_return * 100, 2)),
             sharpe_ratio=float(round(sharpe, 2)),
             max_drawdown_percent=float(round(mdd * 100, 2)),
-            win_rate=float(round(win_rate * 100, 1))
+            win_rate=float(round(win_rate * 100, 1)),
+            rmse=float(round(rmse, 2)),
+            mae=float(round(mae, 2))
         ),
         equity_curve=df['Equity_Curve'].tolist(),
         signals=signals

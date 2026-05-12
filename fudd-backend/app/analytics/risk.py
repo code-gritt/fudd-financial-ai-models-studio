@@ -60,3 +60,29 @@ def calculate_max_drawdown(equity_curve: Iterable[float]) -> float:
             if drawdown < max_drawdown:
                 max_drawdown = drawdown
     return float(max_drawdown)
+
+def calculate_rmse(predictions: Iterable[float], actuals: Iterable[float]) -> float:
+    """
+    Calculates Root Mean Square Error (RMSE).
+    RMSE = sqrt(mean((predictions - actuals)^2))
+    """
+    preds = list(predictions)
+    acts = list(actuals)
+    if not preds or len(preds) != len(acts):
+        return 0.0
+    
+    squared_errors = [(p - a) ** 2 for p, a in zip(preds, acts)]
+    return math.sqrt(sum(squared_errors) / len(preds))
+
+def calculate_mae(predictions: Iterable[float], actuals: Iterable[float]) -> float:
+    """
+    Calculates Mean Absolute Error (MAE).
+    MAE = mean(abs(predictions - actuals))
+    """
+    preds = list(predictions)
+    acts = list(actuals)
+    if not preds or len(preds) != len(acts):
+        return 0.0
+    
+    absolute_errors = [abs(p - a) for p, a in zip(preds, acts)]
+    return sum(absolute_errors) / len(preds)
