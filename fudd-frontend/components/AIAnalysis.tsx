@@ -68,22 +68,27 @@ export default function AIAnalysis() {
                         <div className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
                             {/* Header */}
                             <div className={`p-4 border-b ${analysis.signal === 'BUY' ? 'bg-emerald-50 border-emerald-100' : analysis.signal === 'SELL' ? 'bg-rose-50 border-rose-100' : 'bg-slate-50 border-slate-100'}`}>
-                                <div className="flex justify-between items-end">
-                                    <div>
-                                        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">LLM Signal</p>
-                                        <div className="flex items-center gap-2">
-                                            <p className={`text-2xl font-black tracking-tight ${analysis.signal === 'BUY' ? 'text-emerald-600' : analysis.signal === 'SELL' ? 'text-rose-600' : 'text-slate-600'}`}>
-                                                {analysis.signal}
+                                <div className="flex flex-col gap-3">
+                                    <div className="flex items-center justify-between">
+                                        <div>
+                                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">LLM Signal</p>
+                                            <div className="flex items-center gap-2">
+                                                <p className={`text-2xl font-black tracking-tight ${analysis.signal === 'BUY' ? 'text-emerald-600' : analysis.signal === 'SELL' ? 'text-rose-600' : 'text-slate-600'}`}>
+                                                    {analysis.signal}
+                                                </p>
+                                                <Sparkles className={`h-5 w-5 ${analysis.signal === 'BUY' ? 'text-emerald-500' : analysis.signal === 'SELL' ? 'text-rose-500' : 'text-slate-400'}`} />
+                                            </div>
+                                        </div>
+                                        <div className="text-right">
+                                            <p className="text-xl font-black text-slate-900">${analysis.current_price}</p>
+                                            <p className={`text-xs font-bold ${analysis.price_change_percent > 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
+                                                {analysis.price_change_percent > 0 ? '+' : ''}{analysis.price_change_percent}%
                                             </p>
-                                            <Sparkles className={`h-5 w-5 ${analysis.signal === 'BUY' ? 'text-emerald-500' : analysis.signal === 'SELL' ? 'text-rose-500' : 'text-slate-400'}`} />
                                         </div>
                                     </div>
-                                    <div className="text-right">
-                                        <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">{analysis.ticker}</p>
-                                        <p className="text-xl font-black text-slate-900">${analysis.current_price}</p>
-                                        <p className={`text-xs font-bold ${analysis.price_change_percent > 0 ? 'text-emerald-600' : 'text-rose-600'}`}>
-                                            {analysis.price_change_percent > 0 ? '+' : ''}{analysis.price_change_percent}%
-                                        </p>
+                                    <div className="pt-2 border-t border-slate-200/30 flex justify-between items-center">
+                                        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Ticker</p>
+                                        <p className="text-xs font-black text-slate-600">{analysis.ticker}</p>
                                     </div>
                                 </div>
                             </div>

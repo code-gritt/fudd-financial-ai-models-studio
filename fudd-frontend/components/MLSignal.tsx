@@ -69,22 +69,24 @@ export default function MLSignal() {
           <div className="rounded-xl border border-slate-200 bg-white shadow-sm overflow-hidden">
             {/* Header Signal */}
             <div className={`p-4 border-b ${signal.signal === 'BUY' ? 'bg-emerald-50 border-emerald-100' : 'bg-rose-50 border-rose-100'}`}>
-              <div className="flex justify-between items-end">
-                <div>
-                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Market Signal</p>
-                  <div className="flex items-center gap-2">
-                    <p className={`text-2xl font-black tracking-tight ${signal.signal === 'BUY' ? 'text-emerald-600' : 'text-rose-600'}`}>
-                      {signal.signal}
-                    </p>
-                    {signal.signal === 'BUY' ? (
-                      <TrendingUp className="h-5 w-5 text-emerald-500" />
-                    ) : (
-                      <TrendingDown className="h-5 w-5 text-rose-500" />
-                    )}
+              <div className="flex flex-col gap-3">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-0.5">Market Signal</p>
+                    <div className="flex items-center gap-2">
+                      <p className={`text-2xl font-black tracking-tight ${signal.signal === 'BUY' ? 'text-emerald-600' : 'text-rose-600'}`}>
+                        {signal.signal}
+                      </p>
+                      {signal.signal === 'BUY' ? (
+                        <TrendingUp className="h-5 w-5 text-emerald-500" />
+                      ) : (
+                        <TrendingDown className="h-5 w-5 text-rose-500" />
+                      )}
+                    </div>
                   </div>
                 </div>
-                <div className="text-right">
-                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider mb-1">Confidence</p>
+                <div className="pt-2 border-t border-slate-200/30 flex justify-between items-center">
+                  <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Confidence Score</p>
                   <p className={`text-xl font-black ${signal.signal === 'BUY' ? 'text-emerald-700' : 'text-rose-700'}`}>
                     {signal.confidence}%
                   </p>
